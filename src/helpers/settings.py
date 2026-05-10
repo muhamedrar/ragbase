@@ -7,6 +7,10 @@ class Settings(BaseSettings):
 
     APP_NAME:str
     APP_VERSION:str
+    
+    POSTGERS_USER=str
+    POSTGERS_PASSWORD=str
+    POSTGERS_URL=str
 
     
 @lru_cache()

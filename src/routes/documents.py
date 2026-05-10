@@ -8,3 +8,7 @@ router = APIRouter(
 )
 
 
+router.get("/upload/{department}")
+async def upload_document(department: str, document_name: str):
+
+ pass
