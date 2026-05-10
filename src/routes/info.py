@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Depends
 from helpers.settings import get_settings
 
-settings = get_settings()
+
 router = APIRouter(
-    prefix="/data",
-    tags=["data"]
+    prefix="/info",
+    tags=["info"]
     )
 
-@router.get("/info")
-async def info():
+@router.get("/")
+async def info(settings = Depends(get_settings)):
     return {
         "app_name": settings.APP_NAME,
         "app_version": settings.APP_VERSION
