@@ -9,7 +9,7 @@ class ChunkRepository:
         self.session = session
 
 
-    async def create_chunk(self,data_chunk:dict):
+    async def create_chunk(self,data_chunk:Chunk):
         new_chunk = Chunk(**data_chunk)
         
         await self.session.add(new_chunk)
