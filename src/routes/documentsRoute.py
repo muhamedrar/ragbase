@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from helpers.settings import get_settings
+
 
 
 router = APIRouter(
@@ -8,7 +8,7 @@ router = APIRouter(
 )
 
 
-router.get("/upload/{department}")
+router.post("/upload/{department}")
 async def upload_document(department: str, document_name: str):
 
  pass

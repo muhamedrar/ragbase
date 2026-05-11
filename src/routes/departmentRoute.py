@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends,status
 import os
 from pathlib import Path
 from fastapi.responses import JSONResponse
+from models.enums.ResponseEnums import ResponseEnums
+
 
 router = APIRouter(
     prefix="/department",
@@ -18,12 +20,12 @@ async def create_department(department_name: str):
     if os.path.exists(department_path):
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
-        content={"message": f"department {department_name} is already exist"},
+        content={"message": ResponseEnums.DEPARTMENT_ALREADY_EXIST.value},
         )
 
     else:
         os.mkdir(path=department_path)
 
         return JSONResponse(
-            content={"message": f"department {department_name} created successfally"},
+            content={"message": ResponseEnums.DEPARTMENT_CREATED_SUCCESSFULLY.value},
         )
