@@ -1,9 +1,18 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 from pathlib import Path
+import os
+
+
+
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+env_path = os.path.join(BASE_DIR,'.env')
+
+
+
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict('.env',env_file_encoding='utf-8',extra='ignore')
+    model_config = SettingsConfigDict(env_file=env_path,env_file_encoding='utf-8')
 
 
     APP_NAME:str
@@ -15,7 +24,7 @@ class Settings(BaseSettings):
     POSTGRES_PORT: int = 5432
     POSTGRES_DB: str 
 
-    DRIVER: str = "psycopg2"
+    DRIVER: str = "asyncpg"
 
     @property
     def DATABASE_URL(self) -> str:
