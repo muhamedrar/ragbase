@@ -135,6 +135,8 @@ celerybeat.pid
 *.rdb
 *.aof
 *.pid
+src/assets/*
+!src/assets/.gitkeep
 
 # RabbitMQ
 mnesia/
