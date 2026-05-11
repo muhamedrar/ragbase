@@ -7,9 +7,10 @@ class Chunk(SQLModel, table=True):
     content: str = Field(nullable=False)
     meta: dict = Field( sa_column=Column(JSON))
     order: int = Field(nullable=False, index=True)
-    document_id: int = Field(foreign_key="document.id", nullable=False, index=True)
+    document_id: int = Field(foreign_key="document.id", nullable=False)
+    department_id: int = Field(foreign_key="department.id", index=True) 
     created_at: datetime = Field(default_factory=datetime.now(UTC), nullable=False)
 
-    document: Optional["Department"] = Relationship(back_populates="chunks")
+    document: Optional["Document"] = Relationship(back_populates="chunks")
 
 
