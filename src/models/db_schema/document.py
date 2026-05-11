@@ -8,7 +8,7 @@ class Document(SQLModel, table=True):
     meta: dict = Field( sa_column=Column(JSON))
     hash: str = Field(nullable=False, unique=True, index=True)
     department_id: int = Field(foreign_key="department.id", nullable=False, index=True)
-    created_at: datetime = Field(default_factory=datetime.now(UTC), nullable=False)
+    created_at: datetime = Field(default_factory=lambda:datetime.now(UTC), nullable=False)
 
     chunks: list["Chunk"] = Relationship(back_populates="document")
     department: Optional["Department"] = Relationship(back_populates="documents")

@@ -25,7 +25,7 @@ class DocumentRepository:
             logger.warning("Document with the same content already exists")
             return None
         else:
-            await self.session.add(document)
+            self.session.add(document)
             await self.session.commit()
             await self.session.refresh(document)
 

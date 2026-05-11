@@ -13,11 +13,11 @@ class DepartmentRepository:
 
     async def create_department(self,data_department:Department):
         if await self.is_department_exists(data_department.name):
-            logger.warning(f"Department with name {data_department['name']} already exists")
+            logger.warning(f"Department with name {data_department.name} already exists")
             return None
         else:
             
-            await self.session.add(data_department)
+            self.session.add(data_department)
             await self.session.commit()
             await self.session.refresh(data_department)
 
@@ -39,5 +39,20 @@ class DepartmentRepository:
 
         result = await self.session.execute(stmt)
         return result.scalar()
+    
+    async def get_all_departments_names(self):
+        if not await self.any_department_exists():
+            logger.warning("No departments found in the database")
+            return []
+        else:
+            stmt = select(Department.name)
+            result = await self.session.execute(stmt)
+            return result.scalars().all()
 
-   
+    async def any_department_exists(self):
+        stmt = select(
+            exists().where(Department.id!=None)
+        )
+        result = await self.session.execute(stmt)
+
+        return result.scalar()
