@@ -1,12 +1,17 @@
-from .base_repository import BaseRepository
 from models.db_schema import chunk
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-class ChunkRepository(BaseRepository):
+class ChunkRepository:
 
-    def __init__(self, db_client:object):
-        super().__init__(db_client)
-        self.db_client = db_client
+    def __init__(self, session:AsyncSession):
+        self.session = session
 
 
-    def create_chunk(self,chunk:chunk):
+    async def create_chunk(self,data_chunk:dict):
+        new_chunk = chunk(**data_chunk)
+        
+        self.session.add(new_chunk)
+        self.session.commit(new_chunk)
+        self.session.refresh(new_chunk)
+
+        return chunk
