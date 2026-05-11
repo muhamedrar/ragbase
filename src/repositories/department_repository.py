@@ -11,18 +11,17 @@ class DepartmentRepository:
         self.session = session
 
 
-    async def create_department(self,data_department:dict):
-        if await self.is_department_exists(data_department["name"]):
+    async def create_department(self,data_department:Department):
+        if await self.is_department_exists(data_department.name):
             logger.warning(f"Department with name {data_department['name']} already exists")
             return None
         else:
-            new_department = Department(**data_department)
             
-            await self.session.add(new_department)
+            await self.session.add(data_department)
             await self.session.commit()
-            await self.session.refresh(new_department)
+            await self.session.refresh(data_department)
 
-            return new_department
+            return data_department
     
     
     async def delete_department(self,department_id:int):
