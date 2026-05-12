@@ -12,7 +12,7 @@ class DepartmentRepository:
 
 
     async def create_department(self,data_department:Department):
-        if await self.is_department_exists(data_department.name):
+        if await self.is_department_exists(data_department.id):
             logger.warning(f"Department with name {data_department.name} already exists")
             return None
         else:
@@ -32,9 +32,9 @@ class DepartmentRepository:
     
         
 
-    async def is_department_exists(self,name:str):
+    async def is_department_exists(self,id:int):
         stmt = select(
-            exists().where(Department.name==name)
+            exists().where(Department.id==id)
         )
 
         result = await self.session.execute(stmt)
@@ -48,6 +48,12 @@ class DepartmentRepository:
             stmt = select(Department.name)
             result = await self.session.execute(stmt)
             return result.scalars().all()
+        
+    async def get_department_by_id(self,department_id):
+        stmt = select(Department).where(Department.id==department_id)
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
+    
 
     async def any_department_exists(self):
         stmt = select(

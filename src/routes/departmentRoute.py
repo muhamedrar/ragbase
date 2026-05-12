@@ -3,10 +3,10 @@ import os
 from pathlib import Path
 from fastapi.responses import JSONResponse
 from models.enums.ResponseEnums import ResponseEnums
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.db.dependencies import get_db_session
 from models.request_schema.RequestSchema import DepartmentCreate
 from repositories.department_repository import  DepartmentRepository
-from app.db.dependencies import get_db_session
-from sqlalchemy.ext.asyncio import AsyncSession
 from models.db_schema.department import Department
 
 
@@ -67,17 +67,20 @@ async def delete_department(
     session: AsyncSession = Depends(get_db_session),
 ):
     department_repo = DepartmentRepository(session=session)
+    department = await department_repo.get_department_by_id(department_id=department_id)
 
-    rowcount = await department_repo.delete_department(department_id=department_id)
-    if rowcount == 0 :
+    if department == None :
+
         return JSONResponse(
         content={
             "message": ResponseEnums.DEPARTMENT_IS_NOT_EXIST.value
-        }
-    )
+            }
+        )
 
-
-
+    work_dir_src = Path(os.getcwd())
+    department_path = os.path.join(work_dir_src,'assets',department.name)
+    os.rmdir(department_path)
+    _ = await department_repo.delete_department(department_id=department_id)
     return JSONResponse(
         content={
             "message": ResponseEnums.DEPARTMENT_DELETED_SUCCESSFULLY.value
