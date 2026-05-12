@@ -8,7 +8,7 @@ class Document(SQLModel, table=True):
     doc_name_id: str = Field(nullable=False)
     meta: dict = Field( sa_column=Column(JSON))
     hash: str = Field(nullable=False, unique=True, index=True)
-    department_id: int = Field(foreign_key="department.id", nullable=False, index=True)
+    department_id: int = Field(foreign_key="department.id", nullable=False, index=True,ondelete="CASCADE")
     created_at: datetime = Field(
         sa_column=Column(DateTime(timezone=True), nullable=False),
         default_factory=lambda: datetime.now(UTC)
