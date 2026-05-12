@@ -5,3 +5,5 @@ class ResponseEnums(Enum):
     DEPARTMENT_CREATED_SUCCESSFULLY = "department created successfully"
     DEPARTMENT_IS_NOT_EXIST = "department is not exist for deletion"
     DEPARTMENT_DELETED_SUCCESSFULLY = "department deleted successfully"
+
+    DEPARTMENT_NOT_FOUND = "DEPARTMENT_NOT_FOUND please add DEPARTMENT first"

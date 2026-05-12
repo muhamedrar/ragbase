@@ -1,6 +1,4 @@
 import os
-from sqlalchemy.ext.asyncio import AsyncSession
-from repositories.department_repository import  DepartmentRepository
 from pathlib import Path
 
 
