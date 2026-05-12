@@ -1,8 +1,8 @@
-"""initial migration
+"""empty message
 
-Revision ID: 5d70b1df83c2
+Revision ID: 8782337f5d18
 Revises: 
-Create Date: 2026-05-11 10:19:15.763475
+Create Date: 2026-05-12 04:45:00.280606
 
 """
 from typing import Sequence, Union
@@ -10,8 +10,9 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 import sqlmodel
+
 # revision identifiers, used by Alembic.
-revision: str = '5d70b1df83c2'
+revision: str = '8782337f5d18'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -23,7 +24,7 @@ def upgrade() -> None:
     op.create_table('department',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_department_name'), 'department', ['name'], unique=True)
@@ -33,7 +34,7 @@ def upgrade() -> None:
     sa.Column('meta', sa.JSON(), nullable=True),
     sa.Column('hash', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('department_id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['department_id'], ['department.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -47,7 +48,7 @@ def upgrade() -> None:
     sa.Column('order', sa.Integer(), nullable=False),
     sa.Column('document_id', sa.Integer(), nullable=False),
     sa.Column('department_id', sa.Integer(), nullable=False),
-    sa.Column('created_at', sa.DateTime(), nullable=False),
+    sa.Column('created_at', sa.DateTime(timezone=True), nullable=False),
     sa.ForeignKeyConstraint(['department_id'], ['department.id'], ),
     sa.ForeignKeyConstraint(['document_id'], ['document.id'], ),
     sa.PrimaryKeyConstraint('id')

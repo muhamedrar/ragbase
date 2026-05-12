@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field ,Relationship, JSON, Column
 from datetime import datetime ,UTC
+from sqlalchemy import Column, DateTime
 from typing import Optional
 
 class Chunk(SQLModel, table=True):
@@ -9,7 +10,10 @@ class Chunk(SQLModel, table=True):
     order: int = Field(nullable=False, index=True)
     document_id: int = Field(foreign_key="document.id", nullable=False)
     department_id: int = Field(foreign_key="department.id", index=True) 
-    created_at: datetime = Field(default_factory=lambda:datetime.now(UTC), nullable=False)
+    created_at: datetime = Field(
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+        default_factory=lambda: datetime.now(UTC)
+    )
 
     document: Optional["Document"] = Relationship(back_populates="chunks")
     department: Optional["Department"] = Relationship(back_populates="chunks")

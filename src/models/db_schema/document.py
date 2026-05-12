@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field , Index, Relationship, JSON, Column
 from datetime import datetime ,UTC
+from sqlalchemy import Column, DateTime
 from typing import Optional
 
 class Document(SQLModel, table=True):
@@ -8,7 +9,10 @@ class Document(SQLModel, table=True):
     meta: dict = Field( sa_column=Column(JSON))
     hash: str = Field(nullable=False, unique=True, index=True)
     department_id: int = Field(foreign_key="department.id", nullable=False, index=True)
-    created_at: datetime = Field(default_factory=lambda:datetime.now(UTC), nullable=False)
+    created_at: datetime = Field(
+        sa_column=Column(DateTime(timezone=True), nullable=False),
+        default_factory=lambda: datetime.now(UTC)
+    )
 
     chunks: list["Chunk"] = Relationship(back_populates="document")
     department: Optional["Department"] = Relationship(back_populates="documents")
