@@ -8,7 +8,7 @@ from app.db.dependencies import get_db_session
 from models.request_schema.RequestSchema import DepartmentCreate
 from repositories.department_repository import  DepartmentRepository
 from models.db_schema.department import Department
-
+from controllers.department_controller import DepartmentController
 
 
 router = APIRouter(
@@ -24,22 +24,24 @@ async def create_department(
     
 ):
     department_repo = DepartmentRepository(session=session)
+    department_controller = DepartmentController()
 
-    work_dir_src = Path(os.getcwd())
-    department_path = os.path.join(work_dir_src,'assets',department.name)
+    
+    department_path = await department_controller.get_department_path(department.name)
 
-    if os.path.exists(department_path):
+    
+
+    department = Department(name=department.name)
+    if department_repo.is_department_exists(id=department.id):
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
         content={"message": ResponseEnums.DEPARTMENT_ALREADY_EXIST.value},
         )
-
-    department = Department(name=department.name)
+    
     await department_repo.create_department(
         data_department=department
     )
 
-    os.mkdir(path=department_path)
 
     return JSONResponse(
         content={"message": ResponseEnums.DEPARTMENT_CREATED_SUCCESSFULLY.value},
@@ -67,6 +69,8 @@ async def delete_department(
     session: AsyncSession = Depends(get_db_session),
 ):
     department_repo = DepartmentRepository(session=session)
+    department_controller = DepartmentController()
+
     department = await department_repo.get_department_by_id(department_id=department_id)
 
     if department == None :
@@ -77,9 +81,9 @@ async def delete_department(
             }
         )
 
-    work_dir_src = Path(os.getcwd())
-    department_path = os.path.join(work_dir_src,'assets',department.name)
-    os.rmdir(department_path)
+ 
+    _ = await department_controller.remove_department_dir(department_name=department.name)
+
     _ = await department_repo.delete_department(department_id=department_id)
     return JSONResponse(
         content={
