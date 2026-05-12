@@ -26,18 +26,15 @@ async def create_department(
     department_repo = DepartmentRepository(session=session)
     department_controller = DepartmentController()
 
-    
-    department_path = await department_controller.get_department_path(department.name)
-
-    
-
     department = Department(name=department.name)
-    if department_repo.is_department_exists(id=department.id):
+    
+    if await department_repo.is_department_exists(id=department.id):
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
-        content={"message": ResponseEnums.DEPARTMENT_ALREADY_EXIST.value},
+            content={"message": ResponseEnums.DEPARTMENT_ALREADY_EXIST.value},
         )
     
+    await department_controller.get_or_create_department_path(department_name=department.name)
     await department_repo.create_department(
         data_department=department
     )
