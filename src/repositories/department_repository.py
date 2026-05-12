@@ -1,9 +1,8 @@
 from models.db_schema.department import Department
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete , exists
-import logging
 
-logger = logging.getLogger("uvicorn.error")
+
 
 class DepartmentRepository:
 
@@ -13,7 +12,6 @@ class DepartmentRepository:
 
     async def create_department(self,data_department:Department):
         if await self.is_department_exists(data_department.id):
-            logger.warning(f"Department with name {data_department.name} already exists")
             return None
         else:
             
@@ -42,7 +40,6 @@ class DepartmentRepository:
     
     async def get_all_departments_names(self):
         if not await self.any_department_exists():
-            logger.warning("No departments found in the database")
             return []
         else:
             stmt = select(Department.name)
