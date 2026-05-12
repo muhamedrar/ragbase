@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends,status, Request
+from fastapi import APIRouter, Depends,status, Request, UploadFile, File, Form
 import os
 from pathlib import Path
 from fastapi.responses import JSONResponse
@@ -12,7 +12,11 @@ router = APIRouter(
 )
 
 
-router.post("/upload/{department}")
-async def upload_document(department: str, document_name: str):
+@router.post("/upload")
+async def upload_document(
+  department_id:int = Form(...),
+  file : UploadFile = File(...),
+  session: AsyncSession = Depends(get_db_session),
+):
 
  pass
