@@ -5,10 +5,11 @@ from fastapi.responses import JSONResponse
 from models.enums.ResponseEnums import ResponseEnums
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.dependencies import get_db_session
+import aiofiles
 from controllers.department_controller import DepartmentController
+from controllers.document_controller import DocumentController
 from repositories.document_repository import  DocumentRepository
 from repositories.department_repository import  DepartmentRepository
-
 
 
 
@@ -28,18 +29,31 @@ async def upload_document(
   document_repo = DocumentRepository(session=session)
   department_repo = DepartmentRepository(session=session)
   department_controller = DepartmentController()
+  document_controller = DocumentController()
+
+  department =  await department_repo.get_department_by_id(department_id=department_id)
+  department_path =  department_controller.get_department_path(department_name=department.name)
+
+  if not department_path:
+      return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={
+          'message': ResponseEnums.DEPARTMENT_NOT_FOUND.value
+        }
+      )
+    
+
   
-  if not await department_repo.is_department_exists(id=department_id):
-    return JSONResponse(
-      status_code=status.HTTP_404_NOT_FOUND,
-      content={
-        'message': ResponseEnums.DEPARTMENT_NOT_FOUND.value
-      }
-    )
   
 
-  department = await department_repo.get_department_by_id(department_id=department_id)
-  department_path = await department_controller.get_or_create_department_path(department_name=department.name)
+  await document_controller.upload_document_to_department_path(
+    department_path=department_path,
+    file=file
+  )
 
 
-  pass
+  return JSONResponse(
+    content={
+      'messsage': ResponseEnums.DOCUMENT_UPLOADED_SUCCESSFULLY.value
+    }
+  )

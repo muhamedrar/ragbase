@@ -28,13 +28,13 @@ async def create_department(
 
     department = Department(name=department.name)
     
-    if await department_repo.is_department_exists(id=department.id):
+    if department_controller.get_department_path(department_name=department.name):
         return JSONResponse(
             status_code=status.HTTP_409_CONFLICT,
             content={"message": ResponseEnums.DEPARTMENT_ALREADY_EXIST.value},
         )
     
-    await department_controller.get_or_create_department_path(department_name=department.name)
+    department_controller.create_department_path(department_name=department.name)
     await department_repo.create_department(
         data_department=department
     )
@@ -79,7 +79,7 @@ async def delete_department(
         )
 
  
-    _ = await department_controller.remove_department_dir(department_name=department.name)
+    _ =  department_controller.remove_department_dir(department_name=department.name)
 
     _ = await department_repo.delete_department(department_id=department_id)
     return JSONResponse(
