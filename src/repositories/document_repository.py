@@ -1,10 +1,9 @@
 from models.db_schema.document import Document
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete , exists
-import logging
 from typing import Hashable
 
-logger = logging.getLogger("uvicorn.error")
+
 
 class DocumentRepository:
     
@@ -22,7 +21,7 @@ class DocumentRepository:
     
     async def insert_document(self,document:Document):
         if await self.is_document_exists(document.hash):
-            logger.warning("Document with the same content already exists")
+           
             return None
         else:
             self.session.add(document)
@@ -36,7 +35,7 @@ class DocumentRepository:
         counter = 0
         for document in documents:
             if await self.is_document_exists(document.hash):
-                logger.warning(f"Document {document.doc_name_id} with the same content already exists")
+                
                 continue
             else:
                 counter += 1
