@@ -79,12 +79,12 @@ async def upload_document(
 
 @router.get("/list/{departmet_id}")
 async def list_docuemnts_in_deprtment(
-  departmet_id: int ,
+  department_id: int ,
   session: AsyncSession = Depends(get_db_session)
 ):
   document_repo = DocumentRepository(session=session)
 
-  documents= await document_repo.get_documents_by_department_id(departmet_id=departmet_id)
+  documents= await document_repo.get_documents_by_department_id(departmet_id=department_id)
 
   documents_names =[
      doc.doc_name_id
@@ -100,4 +100,18 @@ async def list_docuemnts_in_deprtment(
 
 
 
+@router.delete("/delete/{document_id}")
+async def delete_document(
+   document_id: int,
+   session: AsyncSession = Depends(get_db_session)
+):
+   
+  document_repo = DocumentRepository(session=session)
 
+  _ = await document_repo.delete_document(document_id=document_id)
+  
+  return JSONResponse(
+    content={
+        "message": ResponseEnums.DOCUMENT_DELETED_SUCCESSFULLY.value
+    }
+)
