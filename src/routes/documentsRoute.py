@@ -14,8 +14,8 @@ from models.db_schema.document import Document
 
 
 router = APIRouter(
-    prefix="/documents",
-    tags=["documents"]
+    prefix="/document",
+    tags=["document"]
 )
 
 
