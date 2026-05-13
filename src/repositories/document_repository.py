@@ -48,3 +48,10 @@ class DocumentRepository:
         result = await self.session.execute(stmt)
         await self.session.commit()
         return result.rowcount
+    
+
+    async def get_documents_by_department_id(self,departmet_id:int):
+        stmt = select(Document).where(Document.department_id == departmet_id)
+
+        result = await self.session.execute(stmt)
+        return result.scalars().all()

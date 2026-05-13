@@ -60,7 +60,7 @@ async def list_departments(
     )
 
 
-@router.delete("/delete/{{department_id}}")
+@router.delete("/delete/{department_id}")
 async def delete_department(
     department_id: int,
     session: AsyncSession = Depends(get_db_session),

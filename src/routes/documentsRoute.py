@@ -77,3 +77,27 @@ async def upload_document(
 
 
 
+@router.get("/list/{departmet_id}")
+async def list_docuemnts_in_deprtment(
+  departmet_id: int ,
+  session: AsyncSession = Depends(get_db_session)
+):
+  document_repo = DocumentRepository(session=session)
+
+  documents= await document_repo.get_documents_by_department_id(departmet_id=departmet_id)
+
+  documents_names =[
+     doc.doc_name_id
+     for doc in documents
+  ]
+
+  return JSONResponse(
+      content={
+          "message": documents_names
+      }
+  )
+
+
+
+
+
