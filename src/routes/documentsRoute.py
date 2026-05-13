@@ -52,11 +52,9 @@ async def upload_document(
       )
   
   department_path =  department_controller.get_department_path(department_name=department.name)
-
-
   document = await document_controller.create_document_object(file=file, department_id=department.id)
-
   insertion_status = await document_repo.insert_document(document)
+
   if not insertion_status:
      return JSONResponse(
         status_code=status.HTTP_409_CONFLICT,
@@ -76,3 +74,6 @@ async def upload_document(
       'messsage': ResponseEnums.DOCUMENT_UPLOADED_SUCCESSFULLY.value
     }
   )
+
+
+

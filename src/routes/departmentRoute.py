@@ -78,7 +78,7 @@ async def delete_department(
             }
         )
 
- 
+    _ = await department_repo.delete_department(department_id=department_id)
     _ =  department_controller.remove_department_dir(department_name=department.name)
 
     _ = await department_repo.delete_department(department_id=department_id)

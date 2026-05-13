@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-
+import shutil
 
 class DepartmentController:
     
@@ -28,6 +28,6 @@ class DepartmentController:
         path = self.get_department_path(department_name)
         if path == None:
             return False
-        os.rmdir(path)
+        shutil.rmtree(path)
         return True
     
