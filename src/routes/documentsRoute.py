@@ -103,13 +103,18 @@ async def list_docuemnts_in_deprtment(
 @router.delete("/delete/{document_id}")
 async def delete_document(
    document_id: int,
+   department_name: str,
    session: AsyncSession = Depends(get_db_session)
 ):
    
   document_repo = DocumentRepository(session=session)
+  document_controller = DocumentController()
+
+  document = await document_repo.get_document_by_id(document_id=document_id)
 
   _ = await document_repo.delete_document(document_id=document_id)
-  
+  _ = await document_controller.remove_document_from_storage(department_name=department_name, doc_name_id=document.doc_name_id)
+
   return JSONResponse(
     content={
         "message": ResponseEnums.DOCUMENT_DELETED_SUCCESSFULLY.value

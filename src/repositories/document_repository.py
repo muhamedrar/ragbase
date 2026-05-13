@@ -55,3 +55,9 @@ class DocumentRepository:
 
         result = await self.session.execute(stmt)
         return result.scalars().all()
+    
+    async def get_document_by_id(self,document_id:int):
+        stmt = select(Document).where(Document.id == document_id)
+
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()

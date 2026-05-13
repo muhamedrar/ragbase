@@ -5,6 +5,7 @@ import aiofiles
 import hashlib
 import uuid
 from models.db_schema.document import Document
+from controllers.department_controller import DepartmentController
 
 class DocumentController:
     # document size validation in settings
@@ -54,3 +55,12 @@ class DocumentController:
         await file.seek(0)
 
         return hasher.hexdigest()
+    
+    async def remove_document_from_storage(self,doc_name_id:str,department_name:str):
+        department_controller = DepartmentController()
+        department_path = department_controller.get_department_path(department_name=department_name)
+        document_path = os.path.join(department_path,doc_name_id)
+        os.remove(document_path)
+        return True
+
+
