@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from models.enums.ResponseEnums import ResponseEnums
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.dependencies import get_db_session
-import aiofiles
+from helpers.settings import Settings, get_settings
 from controllers.department_controller import DepartmentController
 from controllers.document_controller import DocumentController
 from repositories.document_repository import  DocumentRepository
@@ -21,9 +21,11 @@ router = APIRouter(
 
 @router.post("/upload")
 async def upload_document(
+  request:Request,
   department_id:int = Form(...),
   file : UploadFile = File(...),
   session: AsyncSession = Depends(get_db_session),
+  settings : Settings=  Depends(get_settings),
 ):
 
   document_repo = DocumentRepository(session=session)
@@ -32,6 +34,14 @@ async def upload_document(
   document_controller = DocumentController()
 
   department =  await department_repo.get_department_by_id(department_id=department_id)
+
+  if file.size > (settings.MAX_FILE_SIZE_IN_MB*1024*1024):
+     return JSONResponse(
+        status_code=status.HTTP_413_CONTENT_TOO_LARGE,
+        content={
+          'message': ResponseEnums.DOCUMENT_LARGER_THAN_ALLOWED.value
+        }
+      )
 
   if  department==None:
       return JSONResponse(

@@ -7,11 +7,7 @@ import uuid
 from models.db_schema.document import Document
 
 class DocumentController:
-    # extract meta data 
-    # hash function and validation
     # document size validation in settings
-    # create unique name
-    # get document by id
 
     async def generate_file_name(self,fileName:str):
         path = Path(fileName)
