@@ -20,9 +20,8 @@ class DocumentRepository:
         return result.scalar()
     
     async def insert_document(self,document:Document):
-        if await self.is_document_exists(document.hash):
-           
-            return None
+        if await self.is_document_exists(document.hash): 
+            return False
         else:
             self.session.add(document)
             await self.session.commit()

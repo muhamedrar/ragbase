@@ -40,28 +40,20 @@ async def upload_document(
           'message': ResponseEnums.DEPARTMENT_NOT_FOUND.value
         }
       )
-    
-
   
   department_path =  department_controller.get_department_path(department_name=department.name)
 
-  # constuct document object
-  file.filename = await document_controller.generate_file_name(file.filename)
-  meta = {
-    "file_extension": Path(file.filename).suffix.lower(),
-    "content_type": file.content_type,
-  }
-  hash = await document_controller.generate_file_hash(file)
 
-  document = Document(
-     doc_name_id= file.filename,
-     hash=hash,
-     meta = meta,
-     department_id=department.id
-  )
+  document = await document_controller.create_document_object(file=file, department_id=department.id)
 
-  await document_repo.insert_document(document)
-
+  insertion_status = await document_repo.insert_document(document)
+  if not insertion_status:
+     return JSONResponse(
+        status_code=status.HTTP_409_CONFLICT,
+        content={
+          'messsage': ResponseEnums.DOCUMENT_ALREADY_EXIST.value
+        }
+      )
 
   await document_controller.upload_document_to_department_path(
     department_path=department_path,

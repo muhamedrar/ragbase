@@ -4,6 +4,7 @@ from fastapi import UploadFile
 import aiofiles
 import hashlib
 import uuid
+from models.db_schema.document import Document
 
 class DocumentController:
     # extract meta data 
@@ -30,6 +31,22 @@ class DocumentController:
     
    
 
+    async def create_document_object(self,file:UploadFile,department_id:int) ->Document :
+        file.filename = await self.generate_file_name(file.filename)
+        meta = {
+            "file_extension": Path(file.filename).suffix.lower(),
+            "content_type": file.content_type,
+        }
+        hash = await self.generate_file_hash(file)
+
+        document = Document(
+            doc_name_id= file.filename,
+            hash=hash,
+            meta = meta,
+            department_id=department_id
+        )
+
+        return document
 
     async def generate_file_hash(self,file:UploadFile):
 
