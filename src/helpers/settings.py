@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     MAX_FILE_SIZE_IN_MB : int = 10
     SUPPORTED_CONTENT_TYPES: List[str]
 
-    
+
     @property
     def DATABASE_URL(self) -> str:
         driver_part = f"+{self.DRIVER}" if self.DRIVER else ""

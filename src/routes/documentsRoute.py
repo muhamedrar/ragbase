@@ -10,7 +10,9 @@ from controllers.department_controller import DepartmentController
 from controllers.document_controller import DocumentController
 from repositories.document_repository import  DocumentRepository
 from repositories.department_repository import  DepartmentRepository
+from repositories.chunk_repository import  ChunkRepository
 from models.db_schema.document import Document
+from controllers.chunk_controller import ChunckController
 
 
 router = APIRouter(
@@ -19,10 +21,11 @@ router = APIRouter(
 )
 
 
-@router.post("/upload")
+@router.post("/process")
 async def upload_document(
   request:Request,
   department_id:int = Form(...),
+  do_reset:int = Form(1),
   file : UploadFile = File(...),
   session: AsyncSession = Depends(get_db_session),
   settings : Settings=  Depends(get_settings),
@@ -30,8 +33,10 @@ async def upload_document(
 
   document_repo = DocumentRepository(session=session)
   department_repo = DepartmentRepository(session=session)
+  chunk_repository = ChunkRepository(session=session)
   department_controller = DepartmentController()
   document_controller = DocumentController()
+  
 
   department =  await department_repo.get_department_by_id(department_id=department_id)
 
@@ -39,7 +44,7 @@ async def upload_document(
      return JSONResponse(
         status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         content={
-          'message': ResponseEnums.DOCUMENT_TYPE_NOT_SUPPORTED.value
+          'message': ResponseEnums.DOCUMENT_TYPE_IS_NOT_SUPPORTED.value
         }
       )
 
@@ -60,6 +65,23 @@ async def upload_document(
       )
   
   department_path =  department_controller.get_department_path(department_name=department.name)
+
+  # validate do_reset 
+    
+  if do_reset == 1:
+     # rm from document db
+     await document_repo.delete_documents_by_department_id(departmet_id=department_id)
+     # rm from chunk db
+     #------->
+     # rm from storage
+     await document_controller.remove_all_document_from_department(department_path=department_path)
+
+
+
+
+     
+  # insert into document
+  
   document = await document_controller.create_document_object(file=file, department_id=department.id)
   insertion_status = await document_repo.insert_document(document)
 
@@ -70,16 +92,31 @@ async def upload_document(
           'messsage': ResponseEnums.DOCUMENT_ALREADY_EXIST.value
         }
       )
-
+  # insert into storage
   await document_controller.upload_document_to_department_path(
     department_path=department_path,
     file=file
   )
 
+  # insert into chunk
+  doc_path = os.path.join(department_path,file.filename)
+  chunk_controller = ChunckController(path=doc_path)
+  chunks = chunk_controller.split_text()
+  chunk_objs = chunk_controller.make_chunk_object(
+     chunks=chunks,
+     department_id=department.id,
+     document_id=document.id
+  )
+  rows_inserted = await chunk_repository.insert_many_chunks(chunks=chunk_objs)
+
+
+
+
 
   return JSONResponse(
     content={
-      'messsage': ResponseEnums.DOCUMENT_UPLOADED_SUCCESSFULLY.value
+      'messsage': ResponseEnums.DOCUMENT_UPLOADED_SUCCESSFULLY.value,
+      'rows_inserted': rows_inserted
     }
   )
 

@@ -62,5 +62,13 @@ class DocumentController:
         document_path = os.path.join(department_path,doc_name_id)
         os.remove(document_path)
         return True
+    
+    async def remove_all_document_from_department(self,department_path:str):
+        count = 0
+        for doc in os.listdir(department_path):
+            doc_path = os.path.join(department_path, doc)
+            os.remove(doc_path)
+            count+=1
+        return count
 
 

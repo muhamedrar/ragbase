@@ -1,7 +1,7 @@
 from models.db_schema.chunk import Chunk
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete
-
+from sqlalchemy import select, delete,insert
+from typing import List
 
 class ChunkRepository:
 
@@ -47,4 +47,9 @@ class ChunkRepository:
         result = await self.session.execute(stmt)
 
         return result.scalars().all()
+    
+    async def insert_many_chunks(self, chunks:List[Chunk]):
+        self.session.add_all(chunks)
+        await self.session.commit()
+        return len(chunks)
     
