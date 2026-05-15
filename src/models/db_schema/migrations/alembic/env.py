@@ -21,6 +21,7 @@ sys.path.insert(
 import src.models.db_schema.chunk
 import src.models.db_schema.department
 import src.models.db_schema.document
+import src.models.db_schema.embedding
 
 
 config = context.config
