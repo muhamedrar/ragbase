@@ -70,9 +70,9 @@ async def upload_document(
     
   if do_reset == 1:
      # rm from document db
-     await document_repo.delete_documents_by_department_id(departmet_id=department_id)
+     await document_repo.delete_documents_by_department_id(departmet_id=department.id)
      # rm from chunk db
-     #------->
+     await chunk_repository.delete_chunks_by_department_id(department_id=department.id)
      # rm from storage
      await document_controller.remove_all_document_from_department(department_path=department_path)
 
@@ -108,10 +108,6 @@ async def upload_document(
      document_id=document.id
   )
   rows_inserted = await chunk_repository.insert_many_chunks(chunks=chunk_objs)
-
-
-
-
 
   return JSONResponse(
     content={
