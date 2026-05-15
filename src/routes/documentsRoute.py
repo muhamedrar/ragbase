@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends,status, Request, UploadFile, File, Form
+from fastapi import APIRouter, Depends,status, Request, UploadFile, File, Form , BackgroundTasks
 import os
 from pathlib import Path
 from fastapi.responses import JSONResponse
@@ -72,7 +72,7 @@ async def upload_document(
      # rm from document db
      await document_repo.delete_documents_by_department_id(departmet_id=department.id)
      # rm from chunk db
-     await chunk_repository.delete_chunks_by_department_id(department_id=department.id)
+    #  await chunk_repository.delete_chunks_by_department_id(department_id=department.id) handled by sqlalchemy on_cascade
      # rm from storage
      await document_controller.remove_all_document_from_department(department_path=department_path)
 
@@ -107,12 +107,12 @@ async def upload_document(
      department_id=department.id,
      document_id=document.id
   )
-  rows_inserted = await chunk_repository.insert_many_chunks(chunks=chunk_objs)
+  chunks_inserted = await chunk_repository.insert_many_chunks(chunks=chunk_objs)
 
   return JSONResponse(
     content={
       'messsage': ResponseEnums.DOCUMENT_UPLOADED_SUCCESSFULLY.value,
-      'rows_inserted': rows_inserted
+      'chunks_inserted': chunks_inserted
     }
   )
 

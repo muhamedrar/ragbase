@@ -6,7 +6,7 @@ from routes.documentsRoute import router as document_router
 from helpers.settings import get_settings
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 import logging
-
+from openai import AsyncOpenAI
 
 logger = logging.getLogger("uvicorn.error")
 
@@ -29,9 +29,19 @@ async def lifespan(app: FastAPI):
     )
     logger.info(f"Started db_client")
 
+
+    app.state.OpenAI_client= AsyncOpenAI(
+        base_url=settings.OPENAI_URL,
+        api_key=settings.OPENAI_TOKEN
+    )
+    logger.info(f"loading OpenAI_client")
     yield
     await engine.dispose()
     logger.info(f"Shutting down db_client")
+
+    await app.state.OpenAI_client.close()
+    logger.info(f"Shutting down OpenAI_client")
+
 
     logger.info(f"Shutdown complete for {settings.APP_NAME}")
 

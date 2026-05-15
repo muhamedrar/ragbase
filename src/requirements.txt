@@ -10,3 +10,5 @@ PyMuPDF==1.27.2.3
 markdown-it-py==4.2.0
 langchain-text-splitters==1.1.2
 langchain-community==0.4.1
+openai==2.36.0
+pgvector==0.4.2
