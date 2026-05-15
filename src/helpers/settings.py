@@ -2,6 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 from pathlib import Path
 import os
+from typing import List
 
 
 
@@ -27,7 +28,9 @@ class Settings(BaseSettings):
     DRIVER: str = "asyncpg"
 
     MAX_FILE_SIZE_IN_MB : int = 10
+    SUPPORTED_CONTENT_TYPES: List[str]
 
+    
     @property
     def DATABASE_URL(self) -> str:
         driver_part = f"+{self.DRIVER}" if self.DRIVER else ""

@@ -6,3 +6,7 @@ asyncpg==0.31.0
 alembic==1.18.4
 python-multipart==0.0.28
 aiofiles==25.1.0
+PyMuPDF==1.27.2.3
+markdown-it-py==4.2.0
+langchain-text-splitters==1.1.2
+langchain-community==0.4.1

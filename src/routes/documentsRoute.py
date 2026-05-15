@@ -35,6 +35,14 @@ async def upload_document(
 
   department =  await department_repo.get_department_by_id(department_id=department_id)
 
+  if file.content_type not in settings.SUPPORTED_CONTENT_TYPES:
+     return JSONResponse(
+        status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        content={
+          'message': ResponseEnums.DOCUMENT_TYPE_NOT_SUPPORTED.value
+        }
+      )
+
   if file.size > (settings.MAX_FILE_SIZE_IN_MB*1024*1024):
      return JSONResponse(
         status_code=status.HTTP_413_CONTENT_TOO_LARGE,

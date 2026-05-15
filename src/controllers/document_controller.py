@@ -8,7 +8,7 @@ from models.db_schema.document import Document
 from controllers.department_controller import DepartmentController
 
 class DocumentController:
-    # document size validation in settings
+
 
     async def generate_file_name(self,fileName:str):
         path = Path(fileName)

@@ -12,4 +12,5 @@ class ResponseEnums(Enum):
     DOCUMENT_ALREADY_EXIST = "document is already exist"
     DOCUMENT_LARGER_THAN_ALLOWED = "DOCUMENT_LARGER_THAN_ALLOWED"
     DOCUMENT_DELETED_SUCCESSFULLY = "department deleted successfully"
+    DOCUMENT_TYPE_NOT_SUPPORTED = "DOCUMENT_TYPE_NOT_SUPPORTED"
 
