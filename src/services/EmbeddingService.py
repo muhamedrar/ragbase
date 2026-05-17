@@ -19,8 +19,6 @@ class EmbeddingService:
         self.OpenAI_client = OpenAI_client
         self.batch_size = batch_size
         
-    
-
     async def get_document_chunks(self):
         stmt = select(Chunk).where(Chunk.document_id==self.document_id)
         result = await self.session.execute(stmt)
@@ -45,8 +43,6 @@ class EmbeddingService:
             )
 
             embeddings = [item.embedding for item in response.data]
-
-           
 
             embedings_obj = [
                 Embedding(

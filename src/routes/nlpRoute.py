@@ -6,6 +6,7 @@ from models.enums.ResponseEnums import ResponseEnums
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.dependencies import get_db_session
 from helpers.settings import Settings, get_settings
+from services.GenerationModelService import GenerationModelService
 
 
 
@@ -24,4 +25,24 @@ async def search(
   session: AsyncSession = Depends(get_db_session),
   settings : Settings=  Depends(get_settings),
 ):
-    pass
+    gen_service = GenerationModelService(
+        session=session,
+        OpenAI_client=request.app.state.OpenAI_client,
+        Settings=settings
+    )
+
+
+    result = await gen_service.search_vector_db(query=query,limit=limit)
+
+    test_result = [
+        {   'score' : row._mapping['score'],
+            'content' :row._mapping['content']
+        }
+        for row in result
+        
+    ]
+
+    return JSONResponse(
+        content={"message" : test_result}
+    )
+    
