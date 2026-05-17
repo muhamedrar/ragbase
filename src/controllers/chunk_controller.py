@@ -43,7 +43,7 @@ class ChunckController:
         if ext == '.pdf':
             return PyMuPDFLoader(self.path)
         
-    def split_text(self):
+    def split_text(self,chunk_size:int = 500,chunk_overlap:int = 100):
         loader = self.get_loader()
         ext = self.get_file_ext()
 
@@ -65,15 +65,15 @@ class ChunckController:
 
         if ext in ['.txt','.pdf']:
             text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=200,
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
             separators=["\n\n", "\n", " ", ""]
             )
 
             return text_splitter.split_documents(content)
         
 
-    def make_chunk_object(self,chunks:List[Document] ,document_id:int,department_id:int) -> List[Chunk]:
+    def make_chunk_object(self,chunks:List[Document] ,document_id:int,department_id:int,) -> List[Chunk]:
         chunk_objs = []
 
         for idx, chunk in enumerate(chunks):
