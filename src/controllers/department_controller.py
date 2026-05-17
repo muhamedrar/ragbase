@@ -4,7 +4,7 @@ import shutil
 
 class DepartmentController:
     
-    @classmethod
+    
     def make_department_path(self,department_name:int):
         work_dir_src = Path(os.getcwd())
         department_path = os.path.join(work_dir_src,'assets',department_name)

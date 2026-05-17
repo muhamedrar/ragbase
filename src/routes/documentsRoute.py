@@ -71,9 +71,7 @@ async def upload_document(
   if do_reset == 1:
      # rm from document db
      await document_repo.delete_documents_by_department_id(departmet_id=department.id)
-     # rm from chunk db
-    #  await chunk_repository.delete_chunks_by_department_id(department_id=department.id) handled by sqlalchemy on_cascade
-     # rm from storage
+
      await document_controller.remove_all_document_from_department(department_path=department_path)
 
 
