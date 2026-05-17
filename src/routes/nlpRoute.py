@@ -1,0 +1,27 @@
+from fastapi import APIRouter, Depends,status, Request, UploadFile, File, Form , BackgroundTasks
+import os
+from pathlib import Path
+from fastapi.responses import JSONResponse
+from models.enums.ResponseEnums import ResponseEnums
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.db.dependencies import get_db_session
+from helpers.settings import Settings, get_settings
+
+
+
+router = APIRouter(
+    prefix="/nlp/v1",
+    tags=["nlp,v1"]
+)
+
+
+
+@router.get('/search')
+async def search(
+  request:Request,
+  query:str  ,
+  limit:int,
+  session: AsyncSession = Depends(get_db_session),
+  settings : Settings=  Depends(get_settings),
+):
+    pass
