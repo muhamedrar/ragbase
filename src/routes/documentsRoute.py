@@ -27,6 +27,8 @@ async def upload_document(
   request:Request,
   background_tasks: BackgroundTasks,
   department_id:int = Form(...),
+  chunk_size:int = 500,
+  chunk_overlap:int = 100,
   do_reset:int = Form(1),
   file : UploadFile = File(...),
   session: AsyncSession = Depends(get_db_session),
@@ -101,7 +103,7 @@ async def upload_document(
   # insert into chunk , embeding
   doc_path = os.path.join(department_path,file.filename)
   chunk_controller = ChunckController(path=doc_path)
-  chunks = chunk_controller.split_text()
+  chunks = chunk_controller.split_text(chunk_size=chunk_size,chunk_overlap=chunk_overlap)
   chunk_objs = chunk_controller.make_chunk_object(
      chunks=chunks,
      department_id=department.id,
