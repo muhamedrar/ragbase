@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from routes.info import router as info_router
 from routes.departmentRoute import router as department_router
 from routes.documentsRoute import router as document_router
+from routes.nlpRoute import router as nlp_router
 from helpers.settings import get_settings
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 import logging
@@ -52,3 +53,4 @@ app = FastAPI(lifespan=lifespan)
 app.include_router(info_router)
 app.include_router(department_router)
 app.include_router(document_router)
+app.include_router(nlp_router)
