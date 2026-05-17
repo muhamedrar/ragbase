@@ -17,5 +17,6 @@ class Chunk(SQLModel, table=True):
 
     document: Optional["Document"] = Relationship(back_populates="chunks")
     department: Optional["Department"] = Relationship(back_populates="chunks")
-
+    
+    embedding_rel: Optional["Embedding"] = Relationship(back_populates="chunk")
 

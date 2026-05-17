@@ -1,5 +1,5 @@
 from sqlmodel import SQLModel, Field, Relationship
-from sqlalchemy import Column, ForeignKey
+from sqlalchemy import Column, ForeignKey, Index
 from pgvector.sqlalchemy import Vector
 from typing import Optional
 
@@ -24,4 +24,16 @@ class Embedding(SQLModel, table=True):
         )
     )
 
-    chunk: Optional["Chunk"] = Relationship()
+    chunk: Optional["Chunk"] = Relationship(back_populates="embedding_rel")
+    
+    __table_args__ = (
+        Index(
+            "idx_embedding_hnsw",          
+            "embedding",                   
+            postgresql_using="hnsw",       
+            postgresql_ops={              
+                "embedding": "vector_cosine_ops" 
+            }
+        ),
+    )
+    
