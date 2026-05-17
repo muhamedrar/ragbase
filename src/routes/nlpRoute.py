@@ -3,10 +3,12 @@ import os
 from pathlib import Path
 from fastapi.responses import JSONResponse
 from models.enums.ResponseEnums import ResponseEnums
+from models.request_schema.RequestSchema import NlpSearchParam
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.dependencies import get_db_session
 from helpers.settings import Settings, get_settings
 from services.GenerationModelService import GenerationModelService
+from typing import Annotated
 
 
 
@@ -20,8 +22,7 @@ router = APIRouter(
 @router.get('/search')
 async def search(
   request:Request,
-  query:str  ,
-  limit:int,
+  NlpSearchParam: Annotated[NlpSearchParam, Depends()] ,
   session: AsyncSession = Depends(get_db_session),
   settings : Settings=  Depends(get_settings),
 ):
@@ -32,7 +33,7 @@ async def search(
     )
 
 
-    result = await gen_service.search_vector_db(query=query,limit=limit)
+    result = await gen_service.search_vector_db(query=NlpSearchParam.query,limit=NlpSearchParam.limit)
 
     test_result = [
         {   'score' : row._mapping['score'],
