@@ -13,6 +13,7 @@ from repositories.department_repository import  DepartmentRepository
 from repositories.chunk_repository import  ChunkRepository
 from models.db_schema.document import Document
 from controllers.chunk_controller import ChunckController
+from services.EmbeddingService import EmbeddingService
 
 
 router = APIRouter(
@@ -24,6 +25,7 @@ router = APIRouter(
 @router.post("/process")
 async def upload_document(
   request:Request,
+  background_tasks: BackgroundTasks,
   department_id:int = Form(...),
   do_reset:int = Form(1),
   file : UploadFile = File(...),
@@ -96,7 +98,7 @@ async def upload_document(
     file=file
   )
 
-  # insert into chunk
+  # insert into chunk , embeding
   doc_path = os.path.join(department_path,file.filename)
   chunk_controller = ChunckController(path=doc_path)
   chunks = chunk_controller.split_text()
@@ -106,6 +108,20 @@ async def upload_document(
      document_id=document.id
   )
   chunks_inserted = await chunk_repository.insert_many_chunks(chunks=chunk_objs)
+
+  embedding_service = EmbeddingService(
+     session=session,
+     document_id=document.id,
+     Settings=settings,
+     OpenAI_client=request.app.state.OpenAI_client
+  )
+
+
+  background_tasks.add_task(
+     embedding_service.insert_embedings,
+  )
+
+
 
   return JSONResponse(
     content={

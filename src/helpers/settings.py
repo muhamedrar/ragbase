@@ -30,12 +30,12 @@ class Settings(BaseSettings):
     MAX_FILE_SIZE_IN_MB : int = 10
     SUPPORTED_CONTENT_TYPES: List[str]
 
-    OPENAI_TOKEN=str
-    OPENAI_URL=str
-    OPENAI_GENERATION_MODEL=str
-    OPENAI_EMBEDING_MODEL=str
+    OPENAI_TOKEN:str
+    OPENAI_URL:str
+    OPENAI_GENERATION_MODEL:str
+    OPENAI_EMBEDING_MODEL:str
 
-    MODEL_DIMENSION_SIZE=int
+    MODEL_DIMENSION_SIZE:int
 
     @property
     def DATABASE_URL(self) -> str:

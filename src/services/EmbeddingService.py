@@ -5,6 +5,11 @@ from openai import AsyncOpenAI
 from helpers.settings import Settings
 from models.db_schema.embedding import Embedding
 from typing import Optional
+import logging
+
+
+logger = logging.getLogger("uvicorn.error")
+
 # add batch embeding
 class EmbeddingService:
     def __init__(self,Settings:Settings,OpenAI_client:AsyncOpenAI,session:AsyncSession,document_id:int ,batch_size:Optional[int]=10):
@@ -30,10 +35,10 @@ class EmbeddingService:
 
         all_embeddings_objs = []     
         for batch in batch_list(chunks,self.batch_size):
-
+            logger.info(f"embed batch {len(all_embeddings_objs)+1}")
             texts = [c.content for c in batch]
 
-            response = self.OpenAI_client.embeddings.create(
+            response = await self.OpenAI_client.embeddings.create(
                 input=texts,
                 dimensions=self.Settings.MODEL_DIMENSION_SIZE,
                 model=self.Settings.OPENAI_EMBEDING_MODEL,
@@ -51,12 +56,10 @@ class EmbeddingService:
                 for chunk,emb in zip(batch,embeddings)
             ]
 
-            all_embeddings_objs.append(embedings_obj)
-        
+            all_embeddings_objs.extend(embedings_obj)
+            
+        logger.info(f"finshed embedings")
         return all_embeddings_objs
-    
-    
-    
     
     
     async def insert_embedings(self):
