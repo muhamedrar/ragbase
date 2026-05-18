@@ -47,3 +47,11 @@ async def search(
         content={"message" : test_result}
     )
     
+@router.get('/answer')
+async def answer(
+  request:Request,
+  NlpSearchParam: Annotated[NlpSearchParam, Depends()] ,
+  session: AsyncSession = Depends(get_db_session),
+  settings : Settings=  Depends(get_settings),
+):
+    pass
