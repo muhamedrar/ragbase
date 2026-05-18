@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse
 from models.enums.ResponseEnums import ResponseEnums
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.dependencies import get_db_session
-from models.request_schema.RequestSchema import DepartmentCreate
+from models.request_schema.RequestSchema import DepartmentCreateParam
 from repositories.department_repository import  DepartmentRepository
 from models.db_schema.department import Department
 from controllers.department_controller import DepartmentController
@@ -19,7 +19,7 @@ router = APIRouter(
 
 @router.post("/create")
 async def create_department(
-    department: DepartmentCreate,
+    department: DepartmentCreateParam,
     session: AsyncSession = Depends(get_db_session),
     
 ):

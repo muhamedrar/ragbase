@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 from fastapi import Form
 
-class DepartmentCreate(BaseModel):
+class DepartmentCreateParam(BaseModel):
     name: str = Field(
         ...,
         min_length=2,
