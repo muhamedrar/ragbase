@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-
+from fastapi import Form
 
 class DepartmentCreate(BaseModel):
     name: str = Field(
@@ -21,6 +21,20 @@ class NlpSearchParam(BaseModel):
         le=12,      
         description="The maximum number of search results to return."
     )
+
+class DocumentProcessParam:
+    def __init__(
+        self,
+        department_id:int = Form(...),
+        chunk_size: int = Form(500), 
+        chunk_overlap:int =  Form(100),
+        do_reset: int = Form(1),
+        
+    ):
+        self.department_id = department_id
+        self.chunk_size = chunk_size
+        self.chunk_overlap = chunk_overlap
+        self.do_reset = do_reset
 
 
 

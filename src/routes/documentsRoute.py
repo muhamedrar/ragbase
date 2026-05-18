@@ -14,7 +14,8 @@ from repositories.chunk_repository import  ChunkRepository
 from models.db_schema.document import Document
 from controllers.chunk_controller import ChunckController
 from services.EmbeddingService import EmbeddingService
-
+from models.request_schema.RequestSchema import DocumentProcessParam
+from typing import Annotated
 
 router = APIRouter(
     prefix="/document",
@@ -23,13 +24,10 @@ router = APIRouter(
 
 
 @router.post("/process")
-async def upload_document(
+async def process_document(
   request:Request,
   background_tasks: BackgroundTasks,
-  department_id:int = Form(...),
-  chunk_size:int = 500,
-  chunk_overlap:int = 100,
-  do_reset:int = Form(1),
+  DocumentProcessParam : Annotated[DocumentProcessParam, Depends()],
   file : UploadFile = File(...),
   session: AsyncSession = Depends(get_db_session),
   settings : Settings=  Depends(get_settings),
@@ -42,7 +40,7 @@ async def upload_document(
   document_controller = DocumentController()
   
 
-  department =  await department_repo.get_department_by_id(department_id=department_id)
+  department =  await department_repo.get_department_by_id(department_id=DocumentProcessParam.department_id)
 
   if file.content_type not in settings.SUPPORTED_CONTENT_TYPES:
      return JSONResponse(
@@ -72,7 +70,7 @@ async def upload_document(
 
   # validate do_reset 
     
-  if do_reset == 1:
+  if DocumentProcessParam.do_reset == 1:
      # rm from document db
      await document_repo.delete_documents_by_department_id(departmet_id=department.id)
 
@@ -103,7 +101,7 @@ async def upload_document(
   # insert into chunk , embeding
   doc_path = os.path.join(department_path,file.filename)
   chunk_controller = ChunckController(path=doc_path)
-  chunks = chunk_controller.split_text(chunk_size=chunk_size,chunk_overlap=chunk_overlap)
+  chunks = chunk_controller.split_text(chunk_size=DocumentProcessParam.chunk_size,chunk_overlap=DocumentProcessParam.chunk_overlap)
   chunk_objs = chunk_controller.make_chunk_object(
      chunks=chunks,
      department_id=department.id,
